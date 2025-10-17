@@ -47,7 +47,7 @@ require (
 
 require (
 	github.com/go-playground/validator/v10 v10.27.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0
 	go.opentelemetry.io/otel v1.38.0
 	go.uber.org/config v1.4.0
 	go.uber.org/dig v1.19.0 // indirect
