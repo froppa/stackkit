@@ -1,0 +1,5 @@
+foo: bar
+nested:
+  value: 42
+meta:
+  enabled: false
