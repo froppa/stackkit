@@ -94,7 +94,7 @@ func Run(specPath, policyPath, outDir string) error {
 	if err != nil {
 		return fmt.Errorf("temp dir failed: %w", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	for name, content := range files {
 		if err := os.WriteFile(filepath.Join(tmpDir, name), []byte(content), 0644); err != nil {
@@ -134,8 +134,8 @@ func writeJSON(dir, filename string, v interface{}) {
 	if err != nil {
 		return
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	enc := json.NewEncoder(f)
 	enc.SetIndent("", "  ")
-	enc.Encode(v)
+	_ = enc.Encode(v)
 }

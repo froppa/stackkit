@@ -34,8 +34,8 @@ func main() {
 	rootCmd.Flags().StringVar(&specPath, "spec", "", "Path to OpenAPI spec")
 	rootCmd.Flags().StringVar(&policyPath, "policy", "", "Path to Policy file")
 	rootCmd.Flags().StringVar(&outDir, "out", "output", "Output directory")
-	rootCmd.MarkFlagRequired("spec")
-	rootCmd.MarkFlagRequired("policy")
+	_ = rootCmd.MarkFlagRequired("spec")
+	_ = rootCmd.MarkFlagRequired("policy")
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
