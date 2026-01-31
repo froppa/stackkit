@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-01-31T01:46:40.663729863Z",
+  "inputs": {
+    "spec_hash": "ccc51c1f8c98ec702620412f62425c72081530a183565f72ca1f191f9b1f35d4",
+    "policy_hash": "19a244d8372b039bf2863fc83ec5779c6618b44c39e3f1d14b66531d77ad6d8b"
+  },
+  "policy": {
+    "passed": true
+  },
+  "generation": {
+    "prompts": null,
+    "model": "mock-v1"
+  },
+  "verification": {
+    "passed": false,
+    "output": "Running: go [mod init generated]\ngo: creating new go.mod: module generated\ngo: to add module requirements and sums:\n\tgo mod tidy\n\nRunning: go [fmt ./...]\nhandlers.go:10:10: string literal not terminated\nhandlers.go:11:1: expected operand, found '}'\nhandlers.go:12:2: missing ',' in argument list\nmain_test.go:10:23: expected ';', found syntax\nmain_test.go:12:2: expected '}', found 'EOF'\nexit status 2\n\n"
+  },
+  "outcome": "FAIL"
+}

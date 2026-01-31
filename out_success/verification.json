@@ -1,0 +1,4 @@
+{
+  "passed": true,
+  "output": "Running: go [mod init generated]\ngo: creating new go.mod: module generated\ngo: to add module requirements and sums:\n\tgo mod tidy\n\nRunning: go [fmt ./...]\nhandlers.go\nmain_test.go\n\nRunning: go [vet ./...]\n\nRunning: go [test ./...]\nok  \tgenerated\t0.012s\n\n"
+}

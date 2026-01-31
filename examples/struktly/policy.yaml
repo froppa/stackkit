@@ -1,0 +1,3 @@
+max_handlers: 5
+required:
+  - tests

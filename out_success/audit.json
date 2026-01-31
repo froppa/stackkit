@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-01-31T01:46:36.910169709Z",
+  "inputs": {
+    "spec_hash": "a7b6b4b36058b50ccf3484ca72ce54307244dda9c89e6bfde390aedabf256b1e",
+    "policy_hash": "19a244d8372b039bf2863fc83ec5779c6618b44c39e3f1d14b66531d77ad6d8b"
+  },
+  "policy": {
+    "passed": true
+  },
+  "generation": {
+    "prompts": null,
+    "model": "mock-v1"
+  },
+  "verification": {
+    "passed": true,
+    "output": "Running: go [mod init generated]\ngo: creating new go.mod: module generated\ngo: to add module requirements and sums:\n\tgo mod tidy\n\nRunning: go [fmt ./...]\nhandlers.go\nmain_test.go\n\nRunning: go [vet ./...]\n\nRunning: go [test ./...]\nok  \tgenerated\t0.012s\n\n"
+  },
+  "outcome": "SUCCESS"
+}
