@@ -1,0 +1,5 @@
+http:
+  addr: ":8080"
+health: {}
+telemetry:
+  disabled: true

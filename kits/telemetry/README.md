@@ -10,8 +10,8 @@ Pragmatic OpenTelemetry wiring for Fx applications.
 - **Automatic Configuration**: Loads settings from a YAML file key (default `"telemetry"`).
 - **Standard Resource Identity**: Populates resources with service name, version, and
   environment using semantic conventions.
-- **Safe Disabled Mode**: Honors `sdk.disabled` with true noop providers that preserve
-  resource data and sampling semantics.
+- **Safe Disabled Mode**: Honors `telemetry.disabled` or `OTEL_SDK_DISABLED` by disabling
+  sampling and export while retaining SDK providers.
 - **Export Readiness**: Warns when tracing or metrics are enabled without an OTLP
   endpoint so misconfigurations are visible at startup.
 - **OTLP Exporters**: Automatically enables OTLP/gRPC trace and metric exporters
@@ -28,6 +28,8 @@ updates the global OTEL providers.
 
 ```go
 fx.New(
+    fx.Provide(context.Background),
+    logkit.Module(),
     configkit.Module(), // Your application's config module
     telemetry.Module(), // This OpenTelemetry module (installs providers globally)
     fx.Invoke(func(tracer trace.Tracer, meter metric.Meter) {
@@ -64,8 +66,9 @@ telemetry:
   resource_attributes:
     team: "backend"
 
-# Opting out
+```
+
+## Opting out
 
 Applications that should not install the OTEL module can omit `telemetry.Module()` or
 provide an alternative module in their Fx wiring (for example in `app/fx.go`).
-```

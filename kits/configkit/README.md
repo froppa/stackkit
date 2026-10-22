@@ -33,14 +33,6 @@ For tooling and one-off inspection, `configkit.NewYAML` provides a minimal loade
 
 The CLI loader always applies environment expansion and never logs secrets. Use `configkit.Redact(key, value)` to render a redacted view for display.
 
-On Fx boot via `configfx.Module`, a single line is emitted:
-
-```
-msg="config.loaded" env="$ENV" service="$runtimeinfo.Name" version="$runtimeinfo.Version"
-```
-
-Only these fields are logged; configuration values are never included.
-
 ---
 
 ## Usage
@@ -161,5 +153,5 @@ go run github.com/froppa/stackkit/cmd/stackctl config check --all
 ```
 
 Notes:
-- The CLI registers modules you pass via `--with`.
+- The CLI registers the HTTP and telemetry configuration types. There is no `--with` flag.
 - Field specs use `yaml` tags primarily and fall back to `json`. Required is inferred from `validate:"required"`.
