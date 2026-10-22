@@ -21,6 +21,7 @@ type deps struct {
 }
 
 app := fx.New(
+    logkit.Module(),
     shutdownkit.Module(shutdownkit.WithTimeout(5*time.Second)),
     fx.Invoke(func(d deps) {
         shutdownkit.Go(d.WG, func() {
@@ -37,4 +38,6 @@ app := fx.New(
 app.Run()
 ```
 
-Use `shutdownkit.Module()` together with `signals.NewWithSignals` if you need both Fx lifecycle coordination and OS signal triggering in the same process.
+`app.Run()` handles OS signals. Use `signals.NewWithSignals` for standalone
+programs without Fx. The timeout cancels the force context; shutdown still
+waits for workers to return.

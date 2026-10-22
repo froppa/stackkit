@@ -2,10 +2,16 @@
 
 [![CI](https://github.com/froppa/stackkit/actions/workflows/test.yml/badge.svg)](https://github.com/froppa/stackkit/actions/workflows/test.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/froppa/stackkit.svg)](https://pkg.go.dev/github.com/froppa/stackkit)
-[![Go Report Card](https://goreportcard.com/badge/github.com/froppa/stackkit)](https://goreportcard.com/report/github.com/froppa/stackkit)
 
-Personal Go modules for wiring microservices with [Uber Fx](https://github.com/uber-go/fx).
-Everything here is designed to be drop-in, explicit, and easy to reason about when building small services or tools.
+Go packages I use to wire services with [Uber Fx](https://github.com/uber-go/fx):
+configuration, logging, HTTP, health checks, telemetry, and shutdown.
+The kits share a few conventions but can be used individually.
+
+Requires Go 1.24 or later. The API is still evolving.
+
+```sh
+go get github.com/froppa/stackkit
+```
 
 ## Layout
 
@@ -27,63 +33,22 @@ Everything here is designed to be drop-in, explicit, and easy to reason about wh
 
 ## Quick Start
 
-```go
-package main
+Run the [basic service](examples/service-basic/main.go) from a checkout:
 
-import (
-	"context"
-	"net/http"
-
-	"github.com/froppa/stackkit/kits/configkit"
-	"github.com/froppa/stackkit/kits/fxeventlog"
-	"github.com/froppa/stackkit/kits/healthkit"
-	"github.com/froppa/stackkit/kits/httpkit"
-	"github.com/froppa/stackkit/kits/logkit"
-	"github.com/froppa/stackkit/kits/shutdownkit"
-	"github.com/froppa/stackkit/kits/telemetry"
-	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
-	"go.uber.org/zap"
-)
-
-const embeddedConfig = `
-http:
-  addr: ":8080"
-health: {}
-telemetry:
-  disabled: true
-`
-
-func main() {
-	app := fx.New(
-		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-			return fxeventlog.NewMinimal(log)
-		}),
-		fx.Supply(context.Background()),
-		configkit.Module(
-			configkit.WithEmbeddedBytes([]byte(embeddedConfig)),
-		),
-		logkit.Module(),
-		httpkit.Module(),
-		healthkit.MuxModule(),
-		telemetry.Module(),
-		shutdownkit.Module(),
-		fx.Provide(fx.Annotate(
-			func() httpkit.Handler {
-				return httpkit.Handler{
-					Pattern: "/ping",
-					Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-						_, _ = w.Write([]byte("pong"))
-					}),
-				}
-			},
-			fx.ResultTags(`group:"http.handlers"`),
-		)),
-	)
-
-	app.Run()
-}
+```sh
+go run ./examples/service-basic
 ```
+
+It serves `/ping` and `/health` on port 8080, with telemetry export disabled.
+In another terminal:
+
+```sh
+curl http://localhost:8080/ping
+curl http://localhost:8080/health
+```
+
+The example shows the complete Fx wiring, including grouped HTTP handlers.
+Use Ctrl-C to stop the service.
 
 Configuration lives under `./config` by default.
 
@@ -91,10 +56,28 @@ Configuration lives under `./config` by default.
 2. Override with `config/config.yml`, `config/config.local.yml`, and `config/<service>.yml` (uses `runtimeinfo.Name`).
 3. Expand `${VAR:default}` placeholders at load time.
 
-CLI helpers:
+The CLI uses a separate precedence: `config/config.yml`, then `$CONFIG`, then
+`--config`. It registers HTTP and telemetry configuration types.
 
-- `go run github.com/froppa/stackkit/cmd/stackctl config check --all`
-- `go run github.com/froppa/stackkit/cmd/stackctl config discovery --from-yaml=./config/config.yml`
-- `go run github.com/froppa/stackkit/cmd/stackctl config list --key=http --config=./config/config.yml`
+CLI helpers (from a checkout):
 
-Bring your own Fx modules around these pieces; everything here is intentionally small and composable.
+- `go run ./cmd/stackctl config check --all --config=examples/service-basic/config.yml`
+- `go run ./cmd/stackctl config discovery --from-yaml=examples/service-basic/config.yml`
+- `go run ./cmd/stackctl config list --key=http --config=examples/service-basic/config.yml`
+
+## Development
+
+With [mise](https://mise.jdx.dev/) installed:
+
+```sh
+mise install
+mise exec -- make all
+```
+
+`make all` runs vet, lint, and race-enabled tests. `make fmt` and `make tidy`
+are explicit maintenance commands. `make tools` installs the pinned linter
+if you manage Go yourself.
+
+## License
+
+[MIT](LICENSE).

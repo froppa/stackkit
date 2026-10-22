@@ -1,3 +1,4 @@
 .DS_Store
 coverage.out
 bin/
+config/config.local.yml

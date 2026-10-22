@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"net/http"
 
 	"github.com/froppa/stackkit/kits/configkit"
@@ -16,22 +17,17 @@ import (
 	"go.uber.org/zap"
 )
 
-const embeddedConfig = `
-http:
-  addr: ":8080"
-health: {}
-telemetry:
-  disabled: true
-`
+//go:embed config.yml
+var embeddedConfig []byte
 
 func main() {
 	app := fx.New(
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return fxeventlog.NewMinimal(log)
 		}),
-		fx.Supply(context.Background()),
+		fx.Provide(context.Background),
 		configkit.Module(
-			configkit.WithEmbeddedBytes([]byte(embeddedConfig)),
+			configkit.WithEmbeddedBytes(embeddedConfig),
 		),
 		logkit.Module(),
 		httpkit.Module(),

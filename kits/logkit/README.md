@@ -12,13 +12,15 @@ Zap logger integration for Fx applications.
 
 ## Config
 
-```yaml
-logger:
-  encoding: production  # or development/json
-  level: info           # debug|info|warn|error
+`Module()` defaults to production JSON at info level. It does not load YAML.
+Override its configuration with `fx.Replace`:
+
+```go
+logkit.Module(),
+fx.Replace(logkit.Config{Encoding: "development", Level: "debug"}),
 ```
 
-Validation enforces that `encoding` is one of `production|prod|json|development|dev|console` and that `level` resolves to a valid Zap level. Startup fails if the values are out of range.
+`New` rejects unknown encodings and invalid Zap levels.
 
 ## Usage
 

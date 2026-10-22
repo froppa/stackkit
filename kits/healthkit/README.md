@@ -33,6 +33,8 @@ Dedicated server:
 
 ```go
     app := fx.New(
+      configkit.Module(),
+      logkit.Module(),
       healthkit.ServerModule(),
     )
 ```
@@ -41,6 +43,8 @@ Mux attachment:
 
 ```go
     app := fx.New(
+      configkit.Module(),
+      logkit.Module(),
       httpkit.Module(),
       healthkit.MuxModule(),
     )

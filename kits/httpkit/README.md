@@ -24,18 +24,20 @@ http:
 
 ## Usage
 
+See the [runnable service example](../../examples/service-basic/main.go) for
+configuration and logging setup. Register routes as grouped `httpkit.Handler`
+values:
+
 ```go
-app := fx.New(
-  httpkit.Module(),
-  fx.Provide(func() http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-      w.Write([]byte("pong"))
-    })
-  }),
-  fx.Provide(func(h http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-      h.ServeHTTP(w, r)
-    })
-  }),
-)
+fx.Provide(fx.Annotate(
+    func() httpkit.Handler {
+        return httpkit.Handler{
+            Pattern: "/ping",
+            Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+                _, _ = w.Write([]byte("pong"))
+            }),
+        }
+    },
+    fx.ResultTags(`group:"http.handlers"`),
+)),
 ```

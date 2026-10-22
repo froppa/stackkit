@@ -25,7 +25,7 @@ help: ## Show this help message.
 # QUALITY & TESTING (CI Targets)
 # ====================================================================================
 
-all: tidy fmt vet lint test ## Run all quality checks and tests.
+all: vet lint test ## Run all quality checks and tests.
 
 ci: all ## Alias for 'all', intended for CI environments.
 
@@ -68,6 +68,6 @@ clean: ## Clean up build artifacts and coverage reports.
 
 tools: ## Install required development tools.
 	@echo "==> Installing development tools..."
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
 
 .PHONY: all lint update-deps test tidy fmt vet ci help cover-html clean tools
