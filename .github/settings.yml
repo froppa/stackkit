@@ -1,0 +1,9 @@
+repository:
+  description: Personal Go modules for wiring microservices with Uber Fx.
+  topics:
+    - go
+    - uber-fx
+    - microservices
+    - observability
+    - telemetry
+    - configuration
