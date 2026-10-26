@@ -55,3 +55,21 @@ jobs:
           name: coverage-report
           path: coverage.out
           if-no-files-found: error
+
+  # The master ruleset requires a status check named exactly "Test and Lint"
+  # (the workflow name). Report it from one job that passes only when both
+  # Lint and Test succeeded, so the required context reflects both jobs.
+  test-and-lint:
+    name: Test and Lint
+    needs: [lint, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require Lint and Test to succeed
+        env:
+          LINT_RESULT: ${{ needs.lint.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          echo "Lint: $LINT_RESULT, Test: $TEST_RESULT"
+          test "$LINT_RESULT" = success
+          test "$TEST_RESULT" = success
