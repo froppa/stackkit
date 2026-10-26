@@ -77,7 +77,7 @@ func RegisterRequirementType(key string, tt reflect.Type) {
 func registerRequirementType(key string, tt reflect.Type) {
 	// Unwrap pointers for introspection.
 	base := tt
-	for base.Kind() == reflect.Ptr {
+	for base.Kind() == reflect.Pointer {
 		base = base.Elem()
 	}
 
@@ -161,7 +161,7 @@ func Spec(req Requirement) ([]FieldSpec, error) {
 }
 
 func walkStruct(t reflect.Type, prefix string, out *[]FieldSpec) {
-	if t.Kind() == reflect.Ptr {
+	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	if t.Kind() != reflect.Struct {
@@ -193,7 +193,7 @@ func walkStruct(t reflect.Type, prefix string, out *[]FieldSpec) {
 		// If struct, recurse; otherwise record leaf
 		ft := f.Type
 		base := ft
-		for base.Kind() == reflect.Ptr {
+		for base.Kind() == reflect.Pointer {
 			base = base.Elem()
 		}
 		switch base.Kind() {
@@ -280,7 +280,7 @@ func RegisterKnown(key string, sample any) {
 	if t == nil {
 		return
 	}
-	for t.Kind() == reflect.Ptr {
+	for t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	knownMu.Lock()
@@ -443,7 +443,7 @@ func extractFieldAndRule(s string) (field, rule string) {
 // yamlPathFromStructNS maps a validator StructNamespace (Go struct path) to a yaml-like path.
 func yamlPathFromStructNS(ns string, root reflect.Type) string {
 	// Unwrap pointer
-	for root.Kind() == reflect.Ptr {
+	for root.Kind() == reflect.Pointer {
 		root = root.Elem()
 	}
 	if root.Kind() != reflect.Struct || ns == "" {
@@ -471,7 +471,7 @@ func yamlPathFromStructNS(ns string, root reflect.Type) string {
 		}
 		// next
 		t := f.Type
-		for t.Kind() == reflect.Ptr {
+		for t.Kind() == reflect.Pointer {
 			t = t.Elem()
 		}
 		cur = t
@@ -485,7 +485,7 @@ func yamlPathFromStructNS(ns string, root reflect.Type) string {
 // --- Unknown key detection ---
 
 func findUnknownKeys(y interface{}, t reflect.Type, prefix string) []string {
-	for t.Kind() == reflect.Ptr {
+	for t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	if t.Kind() != reflect.Struct {
@@ -526,7 +526,7 @@ func findUnknownKeys(y interface{}, t reflect.Type, prefix string) []string {
 	// Merge inline struct fields into allowed space for name existence checks.
 	for _, f := range inlineFields {
 		ft := f.Type
-		for ft.Kind() == reflect.Ptr {
+		for ft.Kind() == reflect.Pointer {
 			ft = ft.Elem()
 		}
 		if ft.Kind() != reflect.Struct {
@@ -561,7 +561,7 @@ func findUnknownKeys(y interface{}, t reflect.Type, prefix string) []string {
 		// Recurse only into struct fields; maps/slices allow arbitrary nested keys
 		f := allowed[ks]
 		ft := f.Type
-		for ft.Kind() == reflect.Ptr {
+		for ft.Kind() == reflect.Pointer {
 			ft = ft.Elem()
 		}
 		if ft.Kind() == reflect.Struct {

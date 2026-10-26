@@ -68,6 +68,6 @@ clean: ## Clean up build artifacts and coverage reports.
 
 tools: ## Install required development tools.
 	@echo "==> Installing development tools..."
-	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.13.0
 
 .PHONY: all lint update-deps test tidy fmt vet ci help cover-html clean tools

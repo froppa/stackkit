@@ -236,6 +236,11 @@ func applyConfigDefaults(cfg *Config) {
 // buildResource creates the OTEL resource by merging attributes from the default
 // resource, configuration, and runtime metadata package.
 func buildResource(cfg Config) (*sdkresource.Resource, error) {
+	// Use the SDK default's schema URL. Pinning semconv.SchemaURL here conflicts
+	// once resource.Default() moves to a newer semantic convention.
+	base := sdkresource.Default()
+	schemaURL := base.SchemaURL()
+
 	// Standard attributes
 	attrs := []attribute.KeyValue{
 		semconv.ServiceName(cfg.ServiceName),
@@ -246,11 +251,11 @@ func buildResource(cfg Config) (*sdkresource.Resource, error) {
 	if *cfg.Disabled {
 		attrs = append(attrs, attribute.Bool("otel.sdk.disabled", true))
 	}
-	mainAttrs := sdkresource.NewWithAttributes(semconv.SchemaURL, attrs...)
+	mainAttrs := sdkresource.NewWithAttributes(schemaURL, attrs...)
 
 	// Extra attributes from runtime metadata package
 	metaAttrs := sdkresource.NewWithAttributes(
-		semconv.SchemaURL,
+		schemaURL,
 		runtimeinfo.OTELAttributes()...,
 	)
 
@@ -259,10 +264,10 @@ func buildResource(cfg Config) (*sdkresource.Resource, error) {
 	for k, v := range cfg.ResourceAttributes {
 		extraConfigAttrs = append(extraConfigAttrs, attribute.String(k, v))
 	}
-	extraAttrs := sdkresource.NewWithAttributes(semconv.SchemaURL, extraConfigAttrs...)
+	extraAttrs := sdkresource.NewWithAttributes(schemaURL, extraConfigAttrs...)
 
 	// Merge all resource sources.
-	res, err := sdkresource.Merge(sdkresource.Default(), mainAttrs)
+	res, err := sdkresource.Merge(base, mainAttrs)
 	if err != nil {
 		return nil, err
 	}
