@@ -31,7 +31,7 @@ jobs:
       - name: Run Lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.1.6
+          version: v2.13.0
 
   test:
     name: Test

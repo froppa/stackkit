@@ -65,18 +65,12 @@ func TestModule_ProvidesShutdownContexts(t *testing.T) {
 
 func TestShutdownLifecycle(t *testing.T) {
 	var sd ShutdownDeps
-	gracefulObserved := make(chan struct{}, 1)
 
 	app := fx.New(
 		shutdownkit.Module(),
 		fx.Provide(func() *zap.Logger { return zaptest.NewLogger(t) }),
 		fx.Invoke(func(d ShutdownDeps) {
 			sd = d
-			// observe graceful cancellation outside OnStop to avoid ordering issues
-			go func() {
-				<-sd.Graceful.Done()
-				gracefulObserved <- struct{}{}
-			}()
 			// run a managed goroutine
 			sd.WG.Add(1)
 			go func() {
@@ -94,10 +88,5 @@ func TestShutdownLifecycle(t *testing.T) {
 	defer cancelStop()
 	require.NoError(t, app.Stop(ctxStop))
 
-	select {
-	case <-gracefulObserved:
-		// ok
-	default:
-		t.Fatal("expected graceful context to be cancelled during Stop")
-	}
+	require.ErrorIs(t, sd.Graceful.Err(), context.Canceled)
 }

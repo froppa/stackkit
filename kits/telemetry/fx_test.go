@@ -182,6 +182,9 @@ func TestBuildResourceIncludesAttributes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
+	if res.SchemaURL() != sdkresource.Default().SchemaURL() {
+		t.Fatalf("resource schema URL = %q, want SDK default %q", res.SchemaURL(), sdkresource.Default().SchemaURL())
+	}
 	attrs := res.Attributes()
 	if !attrEquals(attrs, semconv.ServiceNameKey, "svc") {
 		t.Fatalf("missing service name attribute")
