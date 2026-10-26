@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/signal"
 	"sync"
 	"syscall"
 	"testing"
@@ -275,6 +276,15 @@ func TestGracefulThenSignalIgnored_NoForce(t *testing.T) {
 	// Ensure that after graceful is canceled programmatically, a subsequent OS
 	// signal is effectively ignored by the handler loop (which exits on
 	// graceful Done) and does not flip the force context.
+	// The handler loop exits and calls signal.Stop once graceful is canceled,
+	// so SIGTERM would fall back to its default action and kill the test
+	// binary ("signal: terminated") whenever the loop wins that race. Keep a
+	// test-owned subscription so the self-sent signal is always consumed here
+	// and the assertion below is about the Shutdown, not process survival.
+	guard := make(chan os.Signal, 1)
+	signal.Notify(guard, syscall.SIGTERM)
+	defer signal.Stop(guard)
+
 	var wg sync.WaitGroup
 	s := sig.NewWithSignals(context.Background(), &wg)
 
